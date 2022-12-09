@@ -11,9 +11,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GenerateTabComplete implements TabCompleter {
@@ -23,7 +21,7 @@ public class GenerateTabComplete implements TabCompleter {
 
         if(args.length == 1) {
             try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(
-                    CraftAMap.getInstance().getDataFolder().toPath(), "*.json")) {
+                    CraftAMap.getInstance().getDataFolder().toPath().resolve("mapdata"), "*.json")) {
                 for (Path path : dirStream) {
                     result.add(path.getFileName().toString());
                 }
