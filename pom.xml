@@ -6,9 +6,9 @@
 
     <groupId>com.hyun</groupId>
     <artifactId>CraftAMap</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
-
+    
     <name>CraftAMap</name>
 
     <properties>

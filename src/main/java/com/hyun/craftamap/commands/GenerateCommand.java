@@ -49,7 +49,7 @@ public class GenerateCommand implements CommandExecutor {
         }
     }
 
-    private void drawBuildings(double scale, EditSession session, Player player, int horizon, Building[] buildings) {
+    private void drawBuildings(double scale, EditSession session, Player player, int horizon, Building[] buildings, String buildingMode) {
         final var world = BukkitAdapter.adapt(player.getWorld());
         
         for (int i = 0; i < buildings.length; i++) {
@@ -65,10 +65,14 @@ public class GenerateCommand implements CommandExecutor {
             }
 
             var region = regions.get(0);
-            session.makeWalls(region, BlockTypes.LIGHT_GRAY_CONCRETE);
+            if(buildingMode.equals("shell")) {
+                session.makeWalls(region, BlockTypes.LIGHT_GRAY_CONCRETE);
 
-            region.setMinimumY(height);
-            session.setBlocks((com.sk89q.worldedit.regions.Region) region, BlockTypes.LIGHT_GRAY_CONCRETE);
+                region.setMinimumY(height);
+                session.setBlocks((com.sk89q.worldedit.regions.Region) region, BlockTypes.LIGHT_GRAY_CONCRETE);
+            } else if(buildingMode.equals("fill")) {
+                session.setBlocks((com.sk89q.worldedit.regions.Region) region, BlockTypes.LIGHT_GRAY_CONCRETE);
+            }
         }
     }
 
@@ -136,9 +140,17 @@ public class GenerateCommand implements CommandExecutor {
         }
 
         var scale = 1d;
+        var buildingMode = "shell";
         for (var i = 1; i < args.length; i++) {
             if (args[i].equals("-s")) {
                 scale = Double.parseDouble(args[++i]);
+            }
+            if (args[i].equals("-b")) {
+                buildingMode = args[++i];
+                if(!buildingMode.equals("shell") && !buildingMode.equals("fill")) {
+                    player.sendMessage("§c建筑模式只能是 shell 或 fill");
+                    return true;
+                }
             }
         }
 
@@ -177,6 +189,7 @@ public class GenerateCommand implements CommandExecutor {
         final var horizon = loc.getBlockY();
 
         double finalScale = scale;
+        String finalBuildingMode = buildingMode;
         CompletableFuture.runAsync(()->{
             player.sendMessage("§a§l正在绘制地图区域，共计 " + elements.getRegions().length + " 个...");
             drawRegions(session, player, horizon, elements.getRegions());
@@ -187,7 +200,7 @@ public class GenerateCommand implements CommandExecutor {
             session.flushQueue();
 
             player.sendMessage("§a§l正在绘制建筑，共计 " + elements.getBuildings().length + " 个...");
-            drawBuildings(finalScale, session, player, horizon, elements.getBuildings());
+            drawBuildings(finalScale, session, player, horizon, elements.getBuildings(), finalBuildingMode);
             session.flushQueue();
 
             player.sendMessage("§a§l正在绘制地标，共计 " + elements.getPois().length + " 个...");
