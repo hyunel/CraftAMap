@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -141,6 +142,7 @@ public class GenerateCommand implements CommandExecutor {
 
         var scale = 1d;
         var buildingMode = "shell";
+        var layersStr = "region,road,building,poi,roadName";
         for (var i = 1; i < args.length; i++) {
             if (args[i].equals("-s")) {
                 scale = Double.parseDouble(args[++i]);
@@ -152,7 +154,11 @@ public class GenerateCommand implements CommandExecutor {
                     return true;
                 }
             }
+            if (args[i].equals("-l")) {
+                layersStr = args[++i];
+            }
         }
+        var layers = Arrays.stream(layersStr.replace(" ", "").split(",")).toList();
 
         Location loc = player.getLocation();
 
@@ -191,26 +197,35 @@ public class GenerateCommand implements CommandExecutor {
         double finalScale = scale;
         String finalBuildingMode = buildingMode;
         CompletableFuture.runAsync(()->{
-            player.sendMessage("§a§l正在绘制地图区域，共计 " + elements.getRegions().length + " 个...");
-            drawRegions(session, player, horizon, elements.getRegions());
-            session.flushQueue();
+            if(layers.contains("region")) {
+                player.sendMessage("§a§l正在绘制地图区域，共计 " + elements.getRegions().length + " 个...");
+                drawRegions(session, player, horizon, elements.getRegions());
+                session.flushQueue();
+            }
 
-            player.sendMessage("§a§l正在绘制道路，共计 " + elements.getRoads().length + " 个...");
-            drawRoads(session, player, horizon, elements.getRoads());
-            session.flushQueue();
+            if(layers.contains("road")) {
+                player.sendMessage("§a§l正在绘制道路，共计 " + elements.getRoads().length + " 个...");
+                drawRoads(session, player, horizon, elements.getRoads());
+                session.flushQueue();
+            }
 
-            player.sendMessage("§a§l正在绘制建筑，共计 " + elements.getBuildings().length + " 个...");
-            drawBuildings(finalScale, session, player, horizon, elements.getBuildings(), finalBuildingMode);
-            session.flushQueue();
+            if(layers.contains("building")) {
+                player.sendMessage("§a§l正在绘制建筑，共计 " + elements.getBuildings().length + " 个...");
+                drawBuildings(finalScale, session, player, horizon, elements.getBuildings(), finalBuildingMode);
+                session.flushQueue();
+            }
 
-            player.sendMessage("§a§l正在绘制地标，共计 " + elements.getPois().length + " 个...");
-            drawPOIs(session, player, horizon, elements.getPois());
-            session.flushQueue();
+            if(layers.contains("poi")) {
+                player.sendMessage("§a§l正在绘制地标，共计 " + elements.getPois().length + " 个...");
+                drawPOIs(session, player, horizon, elements.getPois());
+                session.flushQueue();
+            }
 
-            player.sendMessage("§a§l正在绘制路标，共计 " + elements.getRoadnames().length + " 个...");
-            drawRoadNames(session, player, horizon, elements.getRoadnames());
-            session.flushQueue();
-
+            if(layers.contains("roadName")) {
+                player.sendMessage("§a§l正在绘制路标，共计 " + elements.getRoadnames().length + " 个...");
+                drawRoadNames(session, player, horizon, elements.getRoadnames());
+                session.flushQueue();
+            }
         }).thenRun(()-> {
             session.close();
             sender.sendMessage("§a地图生成完成！");
