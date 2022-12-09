@@ -1,0 +1,18 @@
+name: CraftAMap
+version: '${project.version}'
+main: com.hyun.craftamap.CraftAMap
+api-version: 1.19
+authors: [ Hyun ]
+depend: [ FastAsyncWorldEdit ]
+libraries:
+  - 'com.google.code.gson:gson:2.8.9'
+permissions:
+  craftamap.admin:
+    default: op
+    description: 使用本插件的权限
+commands:
+  craftamap:
+    usage: "§e§l== CraftAmap ==\n§f/<command> <地图数据文件名> [-s <scale>] [-b <fill|shell>] [-l <layer>]"
+    description: CraftAMap
+    permission: craftamap.admin
+    aliases: [ amap ]
