@@ -21,7 +21,7 @@ public final class CraftAMap extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        File mapDataFolder = new File(Objects.requireNonNull(getDataFolder()), "mapdata");
+        File mapDataFolder = new File(Objects.requireNonNull(getDataFolder()), "mapData");
         if(!mapDataFolder.exists()) {
             mapDataFolder.mkdirs();
         }
