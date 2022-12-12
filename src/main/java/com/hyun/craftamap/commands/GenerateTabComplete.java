@@ -21,7 +21,7 @@ public class GenerateTabComplete implements TabCompleter {
 
         if(args.length == 1) {
             try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(
-                    CraftAMap.getInstance().getDataFolder().toPath().resolve("mapdata"), "*.json")) {
+                    CraftAMap.getInstance().getDataFolder().toPath().resolve("mapData"), "*.json")) {
                 for (Path path : dirStream) {
                     result.add(path.getFileName().toString());
                 }
