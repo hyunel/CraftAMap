@@ -74,6 +74,7 @@ public class GenerateCommand implements CommandExecutor {
             } else if(buildingMode.equals("fill")) {
                 session.setBlocks((com.sk89q.worldedit.regions.Region) region, BlockTypes.LIGHT_GRAY_CONCRETE);
             }
+            session.flushQueue();
         }
     }
 
@@ -92,6 +93,7 @@ public class GenerateCommand implements CommandExecutor {
                 session.drawLine(BlockTypes.WHITE_CONCRETE, lastPoint.toBlockVector3(horizon - 1), point.toBlockVector3(horizon - 1), width / 2d, true, true);
                 lastPoint = point;
             }
+            session.flushQueue();
         }
     }
 
